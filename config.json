@@ -7,5 +7,6 @@
   "target_lang": "fr",
   "hotkey": "F9",
   "toggle_mode_hotkey": "F10",
-  "ocr_engine": "tesseract"
+  "ocr_engine": "tesseract",
+  "overlay_timeout": 60
 }

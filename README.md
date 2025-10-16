@@ -92,9 +92,18 @@ pip install -r requirements.txt
   "target_lang": "fr",
   "hotkey": "F9",                     // Capturer et traduire
   "toggle_mode_hotkey": "F10",        // Changer de mode
-  "ocr_engine": "tesseract"
+  "ocr_engine": "tesseract",
+  "overlay_timeout": 60               // Temps d'affichage de l'overlay (secondes)
 }
 ```
+
+### Options de configuration
+
+- **overlay_timeout** : Durée d'affichage de l'overlay en secondes
+  - Par défaut : `60` (1 minute)
+  - Si vous lisez vite : `30` secondes
+  - Si vous lisez lentement : `90` ou `120` secondes
+  - Pour ne jamais fermer automatiquement : mettre une grande valeur comme `3600`
 
 ### Choix du mode par défaut
 

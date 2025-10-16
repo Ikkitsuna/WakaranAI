@@ -25,7 +25,7 @@ class TranslationOverlay:
         self.text_widget = None
         self.close_timer = None
     
-    def show(self, original_text, translated_text, auto_close=True, timeout=30):
+    def show(self, original_text, translated_text, auto_close=True, timeout=60):
         """
         Affiche l'overlay avec le texte traduit
         
@@ -33,7 +33,7 @@ class TranslationOverlay:
             original_text: Texte original
             translated_text: Texte traduit
             auto_close: Si True, ferme automatiquement après timeout secondes
-            timeout: Délai avant fermeture automatique (secondes)
+            timeout: Délai avant fermeture automatique (secondes, défaut 60s)
         """
         self.root = tk.Tk()
         self.root.title("Game Translator")
@@ -191,7 +191,7 @@ class TranslationOverlay:
             self.root.update()
 
 
-def show_overlay_threaded(x, y, original_text, translated_text, width=400, height=200):
+def show_overlay_threaded(x, y, original_text, translated_text, width=400, height=200, timeout=60):
     """
     Affiche l'overlay dans un thread séparé
     
@@ -200,9 +200,10 @@ def show_overlay_threaded(x, y, original_text, translated_text, width=400, heigh
         original_text: Texte original
         translated_text: Texte traduit
         width, height: Dimensions de l'overlay
+        timeout: Délai avant fermeture automatique (secondes, défaut 60s)
     """
     overlay = TranslationOverlay(x, y, width, height)
-    overlay.show(original_text, translated_text)
+    overlay.show(original_text, translated_text, timeout=timeout)
 
 
 def show_error_overlay(error_message):

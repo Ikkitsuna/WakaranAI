@@ -221,10 +221,13 @@ class GameTranslator:
             if overlay_x > 1920 - 420:  # Supposons 1920 de largeur
                 overlay_x = bbox[0] - 410  # À gauche si pas de place à droite
             
+            # Récupérer le timeout depuis la config
+            overlay_timeout = self.config.get('overlay_timeout', 60)
+            
             # Lancer l'overlay dans un thread séparé
             overlay_thread = threading.Thread(
                 target=show_overlay_threaded,
-                args=(overlay_x, overlay_y, text, translated, 400, 250),
+                args=(overlay_x, overlay_y, text, translated, 400, 250, overlay_timeout),
                 daemon=True
             )
             overlay_thread.start()
