@@ -69,12 +69,30 @@ Téléchargez depuis [tesseract-ocr](https://github.com/UB-Mannheim/tesseract/wi
 
 ### Étape 3 : Installer les dépendances Python
 
+**Pour mode Tesseract (rapide) - Python 3.10+** :
 ```bash
 cd ProjectRosetaAI
 pip install -r requirements.txt
 ```
 
-**Note :** Si vous préférez EasyOCR à Tesseract, il est déjà dans les requirements. EasyOCR est plus précis mais plus lourd (télécharge des modèles au premier lancement).
+**Pour mode EasyOCR (précis, langues asiatiques) - Python 3.11 ou 3.12** :
+```bash
+# IMPORTANT: EasyOCR nécessite Python 3.11 ou 3.12 (PAS 3.14)
+# Installer Python 3.11: py install 3.11
+# Créer un venv avec Python 3.11: py -3.11 -m venv venv311
+
+# Activer le venv Python 3.11
+.\venv311\Scripts\Activate.ps1
+
+# Installer EasyOCR et dépendances
+pip install -r requirements-easyocr.txt
+```
+
+**Note** : EasyOCR est **optionnel** mais recommandé pour :
+- 🇯🇵 Jeux japonais (kanji, hiragana, katakana)
+- 🇨🇳 Jeux chinois (simplifié et traditionnel)
+- 🇰🇷 Jeux coréens (hangul)
+- 🎨 Polices exotiques/stylisées
 
 ---
 

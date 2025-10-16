@@ -1,0 +1,18 @@
+# Requirements for EasyOCR mode (Python 3.11 or 3.12 ONLY)
+# Install with: py -3.11 -m pip install -r requirements-easyocr.txt
+
+# First install base requirements
+-r requirements.txt
+
+# EasyOCR and dependencies
+easyocr>=1.7.0
+
+# PyTorch with CUDA support (for GPU acceleration)
+# CUDA 12.1 version (RTX 30xx, 40xx series)
+torch>=2.0.0
+torchvision>=0.15.0
+--index-url https://download.pytorch.org/whl/cu121
+
+# Note: If EasyOCR doesn't detect your GPU, reinstall PyTorch with CUDA:
+# py -3.11 -m pip uninstall torch torchvision
+# py -3.11 -m pip install torch torchvision --index-url https://download.pytorch.org/whl/cu121

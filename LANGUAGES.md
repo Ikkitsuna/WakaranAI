@@ -6,6 +6,34 @@ Game Translator supporte **3 modes OCR/Vision** avec différents niveaux de supp
 
 ---
 
+## ⚠️ IMPORTANT : Configuration des langues OCR
+
+**ATTENTION** : Les modes Tesseract et EasyOCR doivent être configurés avec les **bonnes langues** dans `config.json` !
+
+### ❌ Erreur fréquente (texte charabia)
+
+Si tu captures du texte japonais avec :
+```json
+"ocr_languages": ["en", "fr"]  // ❌ MAUVAIS pour texte japonais !
+```
+→ Résultat : **Charabia total** (caractères aléatoires, corruption)
+
+### ✅ Configuration correcte
+
+Pour jeu japonais :
+```json
+"ocr_languages": ["ja"]  // ✅ BON pour texte japonais !
+```
+
+Pour jeu avec texte mixte (japonais + anglais) :
+```json
+"ocr_languages": ["ja", "en"]  // ✅ Détecte les deux
+```
+
+**Règle d'or** : Configure `ocr_languages` selon la **langue du jeu**, pas la langue de traduction !
+
+---
+
 ## 📊 Comparaison des Modes par Langue
 
 | Langue | Tesseract | EasyOCR | Vision |
@@ -104,16 +132,68 @@ jpn
 
 **⚠️ EasyOCR nécessite Python 3.11 ou 3.12** (incompatible avec Python 3.14)
 
+### Installation
+
+**⚠️ EasyOCR nécessite Python 3.11 ou 3.12** (incompatible avec Python 3.14)
+
+#### Étape 1 : Installer Python 3.11 (si pas déjà fait)
+
+Avec le nouveau gestionnaire Python :
 ```bash
-# Vérifier votre version Python
-python --version
+# Installer Python 3.11
+py install 3.11
 
-# Si Python 3.11/3.12 :
-pip install easyocr opencv-python
-
-# Si Python 3.14 :
-# Utilisez Tesseract ou Vision à la place
+# Vérifier
+py -3.11 --version
+# Output: Python 3.11.9
 ```
+
+#### Étape 2 : Créer un environnement virtuel Python 3.11
+
+```bash
+# Créer venv avec Python 3.11
+py -3.11 -m venv venv311
+
+# Activer
+.\venv311\Scripts\Activate.ps1
+```
+
+#### Étape 3 : Installer EasyOCR
+
+**Option A : Installation simple (CPU uniquement)**
+```bash
+pip install -r requirements-easyocr.txt
+```
+
+**Option B : Installation avec CUDA (GPU - RECOMMANDÉ)**
+```bash
+# Pour RTX 30xx, 40xx series (CUDA 12.1)
+pip install -r requirements.txt
+pip install easyocr
+
+# Installer PyTorch avec CUDA
+pip uninstall torch torchvision
+pip install torch torchvision --index-url https://download.pytorch.org/whl/cu121
+```
+
+#### Étape 4 : Vérifier la détection GPU
+
+Après installation, lance Game Translator et passe en mode EasyOCR (F10).
+
+**Si tu vois** :
+```
+✅ EasyOCR initialisé
+# GPU détecté correctement
+```
+→ Parfait ! 🎉
+
+**Si tu vois** :
+```
+Neither CUDA nor MPS are available - defaulting to CPU
+```
+→ PyTorch n'utilise pas le GPU. Réinstalle avec l'étape CUDA ci-dessus.
+
+**Note** : Même en CPU, EasyOCR fonctionne (juste plus lent).
 
 ### Langues Supportées par EasyOCR
 

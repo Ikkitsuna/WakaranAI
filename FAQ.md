@@ -410,6 +410,85 @@ Puis relancez l'app.
 
 ---
 
+## Problèmes de Langues
+
+### L'OCR retourne du charabia / caractères corrompus
+
+**Cause** : Mauvaise configuration de `ocr_languages` dans `config.json` !
+
+Si tu captures du texte japonais avec `"ocr_languages": ["en", "fr"]`, l'OCR va halluciner et retourner n'importe quoi.
+
+**Solution** :
+1. Identifie la langue du jeu
+2. Configure les bonnes langues OCR
+
+**Exemples** :
+
+Jeu japonais :
+```json
+{
+  "ocr_languages": ["ja"]  // ou ["ja", "en"] si texte mixte
+}
+```
+
+Jeu chinois :
+```json
+{
+  "ocr_languages": ["ch_sim"]  // Simplifié
+// ou
+  "ocr_languages": ["ch_tra"]  // Traditionnel
+}
+```
+
+Jeu coréen :
+```json
+{
+  "ocr_languages": ["ko"]
+}
+```
+
+**Rappel** : `ocr_languages` = langue **du texte à capturer**, pas la langue de traduction !
+
+### EasyOCR ne détecte pas mon GPU
+
+**Problème** : `Neither CUDA nor MPS are available - defaulting to CPU`
+
+**Solution** : Réinstaller PyTorch avec support CUDA
+
+```bash
+# Activer ton venv Python 3.11
+.\venv311\Scripts\Activate.ps1
+
+# Désinstaller PyTorch actuel
+pip uninstall torch torchvision
+
+# Réinstaller avec CUDA 12.1 (RTX 30xx, 40xx)
+pip install torch torchvision --index-url https://download.pytorch.org/whl/cu121
+```
+
+Puis relance Game Translator et vérifie qu'EasyOCR s'initialise avec GPU.
+
+### Tesseract ne détecte pas le japonais/chinois/coréen
+
+**Cause** : Pack de langue manquant
+
+**Solution** :
+1. Télécharge le pack : [Tesseract Language Data](https://github.com/tesseract-ocr/tessdata)
+   - Japonais : `jpn.traineddata`
+   - Chinois simplifié : `chi_sim.traineddata`
+   - Coréen : `kor.traineddata`
+2. Copie dans `C:\Program Files\Tesseract-OCR\tessdata\`
+3. Configure `config.json` :
+```json
+{
+  "ocr_languages": ["ja"]  // ou ["ko"], ["zh_sim"], etc.
+}
+```
+
+**Recommandation** : Pour langues asiatiques, utilise EasyOCR (bien meilleur).
+
+---
+
 ## Divers
 
 ### Puis-je utiliser une autre API de traduction ?

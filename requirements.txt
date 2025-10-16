@@ -1,5 +1,13 @@
+# Core dependencies (all Python versions)
 pytesseract>=0.3.10
 requests>=2.31.0
 keyboard>=0.13.5
 Pillow>=10.0.0
 mss>=9.0.1
+
+# Optional: EasyOCR for better accuracy on exotic fonts and Asian languages
+# Requires Python 3.11 or 3.12 (NOT compatible with Python 3.14)
+# Uncomment the lines below if using Python 3.11/3.12:
+# easyocr>=1.7.0
+# torch>=2.0.0
+# torchvision>=0.15.0
