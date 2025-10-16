@@ -36,7 +36,8 @@ class GameTranslator:
         # Initialiser les composants
         self.translation_mode = self.config.get('translation_mode', 'ocr')
         
-        # Initialiser le traducteur vision si mode vision
+        # Initialiser le traducteur vision (lazy loading possible)
+        self.vision_translator = None
         if self.translation_mode == 'vision':
             self.vision_translator = VisionTranslator(
                 model_name=self.config.get('vision_model', 'gemma3:4b'),
@@ -49,6 +50,7 @@ class GameTranslator:
         
         self.is_processing = False
         self.hotkey = self.config.get('hotkey', 'F9')
+        self.toggle_hotkey = self.config.get('toggle_mode_hotkey', 'F10')
         
         print("=" * 50)
     
@@ -248,6 +250,43 @@ class GameTranslator:
         thread = threading.Thread(target=self.process_translation, daemon=True)
         thread.start()
     
+    def toggle_translation_mode(self):
+        """Bascule entre mode vision et mode OCR"""
+        if self.is_processing:
+            print("⚠️ Traitement en cours, impossible de changer de mode")
+            return
+        
+        # Toggle le mode
+        if self.translation_mode == 'vision':
+            self.translation_mode = 'ocr'
+            print("\n" + "🔄" * 25)
+            print("⚡ PASSAGE EN MODE OCR (RAPIDE)")
+            print("   ✅ Meilleur pour gaming (faible latence)")
+            print("   ✅ Utilise Tesseract + LLM")
+            print("🔄" * 25)
+        else:
+            self.translation_mode = 'vision'
+            
+            # Initialiser le vision_translator si pas déjà fait
+            if self.vision_translator is None:
+                print("\n📦 Chargement du modèle vision...")
+                self.vision_translator = VisionTranslator(
+                    model_name=self.config.get('vision_model', 'gemma3:4b'),
+                    ollama_url=self.config.get('ollama_url', 'http://localhost:11434')
+                )
+            
+            print("\n" + "🔄" * 25)
+            print("🤖 PASSAGE EN MODE VISION (PRÉCIS)")
+            print("   ⚠️ Plus lent, meilleur hors gaming")
+            print("   ✅ Extraction + traduction directe")
+            print("🔄" * 25)
+    
+    def on_toggle_pressed(self):
+        """Callback pour la hotkey de toggle"""
+        print(f"\n⌨️ Toggle hotkey '{self.toggle_hotkey}' détectée!")
+        thread = threading.Thread(target=self.toggle_translation_mode, daemon=True)
+        thread.start()
+    
     def run(self):
         """Lance l'application"""
         # Tester la configuration
@@ -258,12 +297,15 @@ class GameTranslator:
         print("\n" + "=" * 50)
         print("✅ GAME TRANSLATOR PRÊT!")
         print("=" * 50)
-        print(f"📌 Appuyez sur {self.hotkey} pour commencer une traduction")
-        print("📌 Appuyez sur Ctrl+C pour quitter")
+        print(f"📌 {self.hotkey}: Commencer une traduction")
+        print(f"� {self.toggle_hotkey}: Changer de mode (vision ⇄ ocr)")
+        print(f"📌 Ctrl+C: Quitter")
+        print(f"   Mode actuel: {self.translation_mode.upper()}")
         print("=" * 50)
         
-        # Enregistrer la hotkey
+        # Enregistrer les hotkeys
         keyboard.add_hotkey(self.hotkey, self.on_hotkey_pressed)
+        keyboard.add_hotkey(self.toggle_hotkey, self.on_toggle_pressed)
         
         try:
             # Boucle principale (bloquante)

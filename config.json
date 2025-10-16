@@ -1,10 +1,11 @@
 {
-  "translation_mode": "vision",
+  "translation_mode": "ocr",
   "vision_model": "gemma3:4b",
   "ollama_model": "gemma2:2b",
   "ollama_url": "http://localhost:11434",
   "source_lang": "en",
   "target_lang": "fr",
   "hotkey": "F9",
+  "toggle_mode_hotkey": "F10",
   "ocr_engine": "tesseract"
 }
