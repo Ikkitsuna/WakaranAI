@@ -21,14 +21,9 @@ class OCRHandler:
         self.reader = None
         
         if engine == 'easyocr':
-            try:
-                import easyocr
-                print("🔧 Initialisation d'EasyOCR...")
-                self.reader = easyocr.Reader(['en', 'fr'], gpu=False)
-                print("✅ EasyOCR prêt")
-            except ImportError:
-                print("⚠️ EasyOCR non installé, fallback sur Tesseract")
-                self.engine = 'tesseract'
+            print("⚠️ EasyOCR n'est pas installé dans cette version")
+            print("   Utilisation de Tesseract à la place")
+            self.engine = 'tesseract'
         
         if self.engine == 'tesseract':
             try:
@@ -103,66 +98,6 @@ class OCRHandler:
         return text
     
     def _extract_with_easyocr(self, image):
-        """Extraction avec EasyOCR"""
-        if not self.reader:
-            return ""
-        
-        # EasyOCR attend un numpy array ou un chemin de fichier
-        import numpy as np
-        img_array = np.array(image)
-        
-        results = self.reader.readtext(img_array)
-        
-        # Combiner tous les textes détectés
-        texts = [result[1] for result in results]
-        return ' '.join(texts)
-
-
-def preprocess_image_for_ocr(image):
-    """
-    Prétraitement de l'image pour améliorer l'OCR
-    
-    Args:
-        image: PIL.Image
-        
-    Returns:
-        PIL.Image: Image prétraitée
-    """
-    try:
-        import cv2
-        import numpy as np
-        
-        # Convertir en numpy array
-        img_array = np.array(image)
-        
-        # Convertir en niveaux de gris
-        if len(img_array.shape) == 3:
-            gray = cv2.cvtColor(img_array, cv2.COLOR_RGB2GRAY)
-        else:
-            gray = img_array
-        
-        # Augmenter le contraste
-        gray = cv2.convertScaleAbs(gray, alpha=1.5, beta=0)
-        
-        # Débruitage
-        denoised = cv2.fastNlMeansDenoising(gray)
-        
-        # Binarisation adaptative
-        binary = cv2.adaptiveThreshold(
-            denoised, 255,
-            cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
-            cv2.THRESH_BINARY, 11, 2
-        )
-        
-        # Reconvertir en PIL Image
-        processed_image = Image.fromarray(binary)
-        
-        return processed_image
-        
-    except ImportError:
-        # Si OpenCV n'est pas disponible, retourner l'image originale
-        print("⚠️ OpenCV non disponible, pas de prétraitement")
-        return image
-    except Exception as e:
-        print(f"⚠️ Erreur prétraitement: {e}")
-        return image
+        """Extraction avec EasyOCR (non disponible dans cette version)"""
+        print("⚠️ EasyOCR n'est pas disponible")
+        return ""

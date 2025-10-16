@@ -39,7 +39,6 @@ def test_tesseract():
     try:
         import pytesseract
         from PIL import Image
-        import numpy as np
         
         # Créer une image de test
         test_img = Image.new('RGB', (200, 50), color='white')
@@ -139,12 +138,7 @@ def main():
     results.append(test_package("requests"))
     results.append(test_package("keyboard"))
     results.append(test_package("mss"))
-    results.append(test_package("cv2 (opencv-python)", "cv2"))
     results.append(test_package("pytesseract"))
-    
-    # Test optionnel EasyOCR
-    if test_package("easyocr"):
-        print("      Note: EasyOCR est plus lent mais plus précis que Tesseract")
     
     # Test Tesseract
     results.append(test_tesseract())
