@@ -6,37 +6,64 @@ Permet de traduire instantanément les textes de jeux non traduits en capturant 
 
 ## Fonctionnalités
 
-- **Deux modes de traduction** : OCR rapide ou Vision précis
+- **Trois modes de traduction** : Tesseract (rapide), EasyOCR (précis) ou Vision (contexte)
+- **Auto-détection de langue** : Détecte automatiquement la langue du texte (japonais, coréen, chinois, etc.)
 - Hotkey globale (F9) pour capturer et traduire
 - Hotkey de toggle (F10) pour changer de mode en temps réel
 - Sélection visuelle de la zone à traduire
 - Traduction via Ollama (100% local)
-- Overlay transparent avec auto-fermeture (30s)
+- Overlay transparent avec auto-fermeture configurable (60s par défaut)
 - Configuration via fichier JSON
 
 ## 🚀 Modes de traduction
 
-### Mode OCR (Rapide - Recommandé pour gaming)
+### 1. Mode Tesseract (Rapide ⚡)
 - **Pipeline** : Screenshot → Tesseract OCR → LLM traduction
 - **Vitesse** : ⚡ Très rapide (2-5 secondes)
 - **Précision** : ✅ Bonne pour textes clairs
 - **Usage GPU** : Minimal (bon pour gaming)
-- **Idéal pour** : Jeux en cours, textes simples
+- **Idéal pour** : Jeux en cours, textes simples, langues européennes
 
-### Mode Vision (Précis - Recommandé hors gaming)
+### 2. Mode EasyOCR (Précis 🎯)
+- **Pipeline** : Screenshot → EasyOCR → LLM traduction
+- **Vitesse** : ⚡⚡ Rapide (5-10 secondes)
+- **Précision** : ✅✅ Excellente pour langues asiatiques
+- **Usage GPU** : Moyen (avec CUDA) ou CPU
+- **Idéal pour** : Japonais, Coréen, Chinois, 80+ langues
+- **Note** : Nécessite Python 3.11 ou 3.12
+
+### 3. Mode Vision (Contexte 🔍)
 - **Pipeline** : Screenshot → Vision Model → Traduction directe
 - **Vitesse** : 🐌 Lent (10-30 secondes)
-- **Précision** : ✅✅ Excellente, comprend le contexte visuel
+- **Précision** : ✅✅✅ Excellente, comprend le contexte visuel
 - **Usage GPU** : Élevé (peut lag si jeu actif)
 - **Idéal pour** : Screenshots, textes stylisés, jeu en pause
 
 ### Basculer entre les modes
 
-**En jeu** : Appuyez sur `F10` pour changer de mode instantanément !
+**En jeu** : Appuyez sur `F10` pour cycler entre les modes !
 
 ```
-Mode OCR → F10 → Mode Vision
-Mode Vision → F10 → Mode OCR
+Tesseract → F10 → EasyOCR → F10 → Vision → F10 → Tesseract...
+```
+
+### 🔍 Auto-détection de langue
+
+Par défaut, le système détecte **automatiquement** la langue du texte capturé :
+
+- ✅ **Japonais** (Hiragana, Katakana, Kanji) → Auto-configure pour `ja`
+- ✅ **Coréen** (Hangul) → Auto-configure pour `ko`
+- ✅ **Chinois** (caractères CJK) → Auto-configure pour `ja` (compatibilité)
+- ✅ **Arabe, Russe, Cyrillique** → Auto-configurés
+- ✅ **Texte mixte** → Détecte les multiples langues
+
+**Plus besoin de configurer `ocr_languages` manuellement !**
+
+Pour désactiver l'auto-détection, modifier `config.json` :
+```json
+{
+  "auto_detect_language": false
+}
 ```
 
 ## Installation

@@ -6,6 +6,7 @@
   "source_lang": "en",
   "target_lang": "fr",
   "ocr_languages": ["en", "fr"],
+  "auto_detect_language": true,
   "hotkey": "F9",
   "toggle_mode_hotkey": "F10",
   "overlay_timeout": 60

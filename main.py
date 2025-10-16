@@ -46,14 +46,15 @@ class GameTranslator:
         
         # Initialiser OCR handlers (lazy loading pour EasyOCR)
         ocr_languages = self.config.get('ocr_languages', ['en'])
+        auto_detect = self.config.get('auto_detect_language', True)
         
         # Tesseract toujours disponible
-        self.ocr_tesseract = OCRHandler(engine='tesseract', languages=ocr_languages)
+        self.ocr_tesseract = OCRHandler(engine='tesseract', languages=ocr_languages, auto_detect=auto_detect)
         
         # EasyOCR lazy loading
         self.ocr_easyocr = None
         if self.translation_mode == 'easyocr':
-            self.ocr_easyocr = OCRHandler(engine='easyocr', languages=ocr_languages)
+            self.ocr_easyocr = OCRHandler(engine='easyocr', languages=ocr_languages, auto_detect=auto_detect)
         
         # OCR actif selon le mode
         if self.translation_mode == 'easyocr':
@@ -302,7 +303,8 @@ class GameTranslator:
             if self.ocr_easyocr is None:
                 print("\n📦 Chargement d'EasyOCR...")
                 ocr_languages = self.config.get('ocr_languages', ['en'])
-                self.ocr_easyocr = OCRHandler(engine='easyocr', languages=ocr_languages)
+                auto_detect = self.config.get('auto_detect_language', True)
+                self.ocr_easyocr = OCRHandler(engine='easyocr', languages=ocr_languages, auto_detect=auto_detect)
             
             # Vérifier si EasyOCR est vraiment disponible
             if self.ocr_easyocr and self.ocr_easyocr.engine == 'easyocr':
