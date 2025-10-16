@@ -287,27 +287,35 @@ Game Translator :
 
 ### Puis-je changer l'apparence de l'overlay ?
 
-**Oui !** Éditez `overlay.py` :
+**Oui !** Plusieurs options disponibles :
 
-**Couleurs** (lignes 60-70) :
+**⏱️ Durée d'affichage** (le plus simple - via config.json) :
+```json
+{
+  "overlay_timeout": 60  // En secondes
+}
+```
+- **30** : Lecture rapide
+- **60** : Par défaut (1 minute)
+- **90-120** : Lecture lente, textes longs
+- **3600** : Pratiquement jamais fermer automatiquement (1 heure)
+
+**🎨 Couleurs** (dans `overlay.py`, lignes 60-70) :
 ```python
-self.root.configure(bg='#1e1e1e')  # Fond
-title_label = tk.Label(..., fg='#61dafb', bg='#1e1e1e')  # Titre
+self.root.configure(bg='#1e1e1e')  # Fond noir
+title_label = tk.Label(..., fg='#61dafb', bg='#1e1e1e')  # Titre bleu
 ```
 
-**Dimensions** (ligne 165 dans `main.py`) :
+**📐 Dimensions** (dans `main.py`, ligne ~227) :
 ```python
 overlay_thread = threading.Thread(
     target=show_overlay_threaded,
-    args=(overlay_x, overlay_y, text, translated, 500, 300),  # width, height
+    args=(overlay_x, overlay_y, text, translated, 500, 300, overlay_timeout),  # width, height
     daemon=True
 )
 ```
 
-**Délai d'auto-fermeture** (ligne 108 dans `overlay.py`) :
-```python
-self.close_timer = self.root.after(15 * 1000, self.close)  # 15 secondes
-```
+**💡 Conseil** : Commencez par ajuster `overlay_timeout` dans `config.json`, c'est le plus simple !
 
 ### Puis-je traduire plusieurs zones simultanément ?
 
