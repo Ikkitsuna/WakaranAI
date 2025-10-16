@@ -10,20 +10,33 @@ from PIL import Image
 class OCRHandler:
     """Gère l'extraction de texte depuis des images"""
     
-    def __init__(self, engine='tesseract'):
+    def __init__(self, engine='tesseract', languages=['en']):
         """
         Initialise le handler OCR
         
         Args:
             engine: 'tesseract' ou 'easyocr'
+            languages: Liste des langues pour EasyOCR (ex: ['en', 'ja', 'zh_sim'])
         """
         self.engine = engine
         self.reader = None
+        self.languages = languages
         
         if engine == 'easyocr':
-            print("⚠️ EasyOCR n'est pas installé dans cette version")
-            print("   Utilisation de Tesseract à la place")
-            self.engine = 'tesseract'
+            try:
+                import easyocr
+                print(f"📦 Initialisation EasyOCR avec langues: {', '.join(languages)}")
+                print("   ⏳ Cela peut prendre quelques secondes...")
+                self.reader = easyocr.Reader(languages, gpu=True)
+                print("✅ EasyOCR initialisé")
+            except ImportError:
+                print("⚠️ EasyOCR n'est pas installé (nécessite Python 3.11 ou 3.12)")
+                print("   Fallback sur Tesseract")
+                self.engine = 'tesseract'
+            except Exception as e:
+                print(f"⚠️ Erreur lors de l'initialisation EasyOCR: {e}")
+                print("   Fallback sur Tesseract")
+                self.engine = 'tesseract'
         
         if self.engine == 'tesseract':
             try:
@@ -91,13 +104,48 @@ class OCRHandler:
         """Extraction avec Tesseract"""
         import pytesseract
         
+        # Mapper les codes de langue pour Tesseract
+        lang_map = {
+            'en': 'eng',
+            'fr': 'fra',
+            'ja': 'jpn',
+            'ko': 'kor',
+            'zh_sim': 'chi_sim',
+            'zh_tra': 'chi_tra',
+            'es': 'spa',
+            'de': 'deu',
+            'it': 'ita',
+            'pt': 'por',
+            'ru': 'rus',
+            'ar': 'ara',
+        }
+        
+        # Construire la liste des langues pour Tesseract
+        tesseract_langs = [lang_map.get(lang, 'eng') for lang in self.languages]
+        lang_string = '+'.join(tesseract_langs)
+        
         # Configuration pour améliorer la détection
-        custom_config = r'--oem 3 --psm 6'
+        custom_config = f'--oem 3 --psm 6 -l {lang_string}'
         
         text = pytesseract.image_to_string(image, config=custom_config)
         return text
     
     def _extract_with_easyocr(self, image):
-        """Extraction avec EasyOCR (non disponible dans cette version)"""
-        print("⚠️ EasyOCR n'est pas disponible")
-        return ""
+        """Extraction avec EasyOCR"""
+        if self.reader is None:
+            print("⚠️ EasyOCR reader non initialisé")
+            return ""
+        
+        import numpy as np
+        
+        # Convertir PIL Image en numpy array pour EasyOCR
+        img_array = np.array(image)
+        
+        # EasyOCR retourne une liste de (bbox, texte, confiance)
+        results = self.reader.readtext(img_array)
+        
+        # Extraire juste le texte
+        texts = [result[1] for result in results]
+        
+        # Joindre tous les textes détectés
+        return '\n'.join(texts)

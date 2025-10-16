@@ -1,12 +1,12 @@
 {
-  "translation_mode": "ocr",
+  "translation_mode": "tesseract",
   "vision_model": "gemma3:4b",
   "ollama_model": "gemma2:2b",
   "ollama_url": "http://localhost:11434",
   "source_lang": "en",
   "target_lang": "fr",
+  "ocr_languages": ["en", "fr"],
   "hotkey": "F9",
   "toggle_mode_hotkey": "F10",
-  "ocr_engine": "tesseract",
   "overlay_timeout": 60
 }

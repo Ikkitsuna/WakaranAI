@@ -34,9 +34,9 @@ class GameTranslator:
         self.config = self.load_config(config_path)
         
         # Initialiser les composants
-        self.translation_mode = self.config.get('translation_mode', 'ocr')
+        self.translation_mode = self.config.get('translation_mode', 'tesseract')
         
-        # Initialiser le traducteur vision (lazy loading possible)
+        # Initialiser le traducteur vision (lazy loading)
         self.vision_translator = None
         if self.translation_mode == 'vision':
             self.vision_translator = VisionTranslator(
@@ -44,8 +44,24 @@ class GameTranslator:
                 ollama_url=self.config.get('ollama_url', 'http://localhost:11434')
             )
         
-        # Toujours initialiser OCR et translator classique (pour fallback)
-        self.ocr = OCRHandler(engine=self.config.get('ocr_engine', 'tesseract'))
+        # Initialiser OCR handlers (lazy loading pour EasyOCR)
+        ocr_languages = self.config.get('ocr_languages', ['en'])
+        
+        # Tesseract toujours disponible
+        self.ocr_tesseract = OCRHandler(engine='tesseract', languages=ocr_languages)
+        
+        # EasyOCR lazy loading
+        self.ocr_easyocr = None
+        if self.translation_mode == 'easyocr':
+            self.ocr_easyocr = OCRHandler(engine='easyocr', languages=ocr_languages)
+        
+        # OCR actif selon le mode
+        if self.translation_mode == 'easyocr':
+            self.ocr = self.ocr_easyocr if self.ocr_easyocr else self.ocr_tesseract
+        else:
+            self.ocr = self.ocr_tesseract
+        
+        # Translator pour les modes OCR
         self.translator = OllamaTranslator(self.config)
         
         self.is_processing = False
@@ -70,14 +86,19 @@ class GameTranslator:
             print(f"✅ Configuration chargée depuis '{config_path}'")
             
             # Afficher le mode de traduction
-            translation_mode = config.get('translation_mode', 'ocr')
+            translation_mode = config.get('translation_mode', 'tesseract')
             print(f"   Mode: {translation_mode.upper()}")
             
             if translation_mode == 'vision':
                 print(f"   Modèle Vision: {config.get('vision_model')}")
-            else:
-                print(f"   Modèle: {config.get('ollama_model')}")
-                print(f"   OCR: {config.get('ocr_engine')}")
+            elif translation_mode == 'easyocr':
+                print(f"   OCR: EasyOCR")
+                print(f"   Langues OCR: {', '.join(config.get('ocr_languages', ['en']))}")
+                print(f"   Modèle LLM: {config.get('ollama_model')}")
+            else:  # tesseract
+                print(f"   OCR: Tesseract")
+                print(f"   Langues OCR: {', '.join(config.get('ocr_languages', ['en']))}")
+                print(f"   Modèle LLM: {config.get('ollama_model')}")
             
             print(f"   Traduction: {config.get('source_lang')} → {config.get('target_lang')}")
             print(f"   Hotkey: {config.get('hotkey')}")
@@ -113,11 +134,22 @@ class GameTranslator:
         if self.translation_mode == 'vision':
             print("📸 Mode VISION activé")
             if not self.vision_translator.test_connection():
-                print("\n⚠️ Modèle vision non disponible, fallback sur mode OCR")
-                self.translation_mode = 'ocr'
+                print("\n⚠️ Modèle vision non disponible, fallback sur Tesseract")
+                self.translation_mode = 'tesseract'
+                self.ocr = self.ocr_tesseract
                 return self.translator.test_connection()
-        else:
-            print("📝 Mode OCR activé")
+        elif self.translation_mode == 'easyocr':
+            print("🎯 Mode EASYOCR activé")
+            if self.ocr_easyocr is None or self.ocr_easyocr.engine != 'easyocr':
+                print("\n⚠️ EasyOCR non disponible, fallback sur Tesseract")
+                self.translation_mode = 'tesseract'
+                self.ocr = self.ocr_tesseract
+            if not self.translator.test_connection():
+                print("\n❌ Ollama n'est pas accessible!")
+                print("   Assurez-vous qu'Ollama est lancé: ollama serve")
+                return False
+        else:  # tesseract
+            print("⚡ Mode TESSERACT activé")
             if not self.translator.test_connection():
                 print("\n❌ Ollama n'est pas accessible!")
                 print("   Assurez-vous qu'Ollama est lancé: ollama serve")
@@ -178,19 +210,20 @@ class GameTranslator:
                     
                     # Vérifier si la traduction a échoué
                     if translated.startswith('[ERREUR:') or not translated.strip():
-                        print("⚠️ Échec du mode vision, fallback sur OCR...")
-                        self.translation_mode = 'ocr'  # Temporary fallback
+                        print("⚠️ Échec du mode vision, fallback sur Tesseract...")
+                        self.translation_mode = 'tesseract'  # Temporary fallback
                     else:
                         text = "[Texte extrait par vision]"  # Placeholder
                         print(f"✅ Vision OK: {len(translated)} caractères")
                 
                 except Exception as e:
-                    print(f"⚠️ Erreur vision: {e}, fallback sur OCR...")
-                    self.translation_mode = 'ocr'  # Temporary fallback
+                    print(f"⚠️ Erreur vision: {e}, fallback sur Tesseract...")
+                    self.translation_mode = 'tesseract'  # Temporary fallback
             
-            # ====== MODE OCR (ou fallback) ======
-            if self.translation_mode == 'ocr' or translated is None:
-                print("\n🔍 Mode OCR: Extraction puis traduction...")
+            # ====== MODE OCR (Tesseract ou EasyOCR) ======
+            if self.translation_mode in ['tesseract', 'easyocr'] or translated is None:
+                mode_name = "Tesseract" if self.translation_mode == 'tesseract' else "EasyOCR"
+                print(f"\n🔍 Mode {mode_name}: Extraction puis traduction...")
                 
                 # Étape 2: OCR
                 text = self.ocr.extract_text(image)
@@ -206,7 +239,8 @@ class GameTranslator:
                 translated = self.translator.translate(text)
             
             # Restaurer le mode original si fallback temporaire
-            if self.config.get('translation_mode') == 'vision':
+            original_mode = self.config.get('translation_mode', 'tesseract')
+            if original_mode == 'vision' and self.translation_mode == 'tesseract':
                 self.translation_mode = 'vision'
             
             # Étape 5: Affichage de l'overlay
@@ -254,35 +288,70 @@ class GameTranslator:
         thread.start()
     
     def toggle_translation_mode(self):
-        """Bascule entre mode vision et mode OCR"""
+        """Cycle entre les 3 modes: tesseract → easyocr → vision → tesseract"""
         if self.is_processing:
             print("⚠️ Traitement en cours, impossible de changer de mode")
             return
         
-        # Toggle le mode
-        if self.translation_mode == 'vision':
-            self.translation_mode = 'ocr'
-            print("\n" + "🔄" * 25)
-            print("⚡ PASSAGE EN MODE OCR (RAPIDE)")
-            print("   ✅ Meilleur pour gaming (faible latence)")
-            print("   ✅ Utilise Tesseract + LLM")
-            print("🔄" * 25)
-        else:
+        # Cycle des modes
+        if self.translation_mode == 'tesseract':
+            # Tesseract → EasyOCR
+            self.translation_mode = 'easyocr'
+            
+            # Initialiser EasyOCR si pas déjà fait
+            if self.ocr_easyocr is None:
+                print("\n📦 Chargement d'EasyOCR...")
+                ocr_languages = self.config.get('ocr_languages', ['en'])
+                self.ocr_easyocr = OCRHandler(engine='easyocr', languages=ocr_languages)
+            
+            # Vérifier si EasyOCR est vraiment disponible
+            if self.ocr_easyocr and self.ocr_easyocr.engine == 'easyocr':
+                self.ocr = self.ocr_easyocr
+                print("\n" + "🔄" * 25)
+                print("🎯 PASSAGE EN MODE EASYOCR (PRÉCIS)")
+                print("   ✅ Meilleur pour polices exotiques")
+                print("   ✅ Excellent pour langues asiatiques (ja/zh/ko)")
+                print("   ⚠️ Plus lent que Tesseract (5-10s)")
+                print("🔄" * 25)
+            else:
+                # Fallback direct sur vision si EasyOCR indisponible
+                print("\n⚠️ EasyOCR non disponible, passage direct en mode Vision")
+                self.translation_mode = 'vision'
+                self._activate_vision_mode()
+        
+        elif self.translation_mode == 'easyocr':
+            # EasyOCR → Vision
             self.translation_mode = 'vision'
-            
-            # Initialiser le vision_translator si pas déjà fait
-            if self.vision_translator is None:
-                print("\n📦 Chargement du modèle vision...")
-                self.vision_translator = VisionTranslator(
-                    model_name=self.config.get('vision_model', 'gemma3:4b'),
-                    ollama_url=self.config.get('ollama_url', 'http://localhost:11434')
-                )
-            
+            self._activate_vision_mode()
+        
+        else:  # vision
+            # Vision → Tesseract
+            self.translation_mode = 'tesseract'
+            self.ocr = self.ocr_tesseract
             print("\n" + "🔄" * 25)
-            print("🤖 PASSAGE EN MODE VISION (PRÉCIS)")
-            print("   ⚠️ Plus lent, meilleur hors gaming")
-            print("   ✅ Extraction + traduction directe")
+            print("⚡ PASSAGE EN MODE TESSERACT (RAPIDE)")
+            print("   ✅ Le plus rapide (2-5s)")
+            print("   ✅ Idéal pour gaming")
+            print("   ⚠️ Moins bon sur polices exotiques")
             print("🔄" * 25)
+    
+    def _activate_vision_mode(self):
+        """Active le mode vision"""
+        # Initialiser le vision_translator si pas déjà fait
+        if self.vision_translator is None:
+            print("\n📦 Chargement du modèle vision...")
+            self.vision_translator = VisionTranslator(
+                model_name=self.config.get('vision_model', 'gemma3:4b'),
+                ollama_url=self.config.get('ollama_url', 'http://localhost:11434')
+            )
+        
+        print("\n" + "🔄" * 25)
+        print("🤖 PASSAGE EN MODE VISION (ULTRA PRÉCIS)")
+        print("   ✅ Meilleure précision globale")
+        print("   ✅ Comprend contexte visuel")
+        print("   ⚠️ TRÈS lent (10-30s)")
+        print("   ⚠️ GPU intensif (pas pour gaming)")
+        print("🔄" * 25)
     
     def on_toggle_pressed(self):
         """Callback pour la hotkey de toggle"""
@@ -301,7 +370,7 @@ class GameTranslator:
         print("✅ GAME TRANSLATOR PRÊT!")
         print("=" * 50)
         print(f"📌 {self.hotkey}: Commencer une traduction")
-        print(f"� {self.toggle_hotkey}: Changer de mode (vision ⇄ ocr)")
+        print(f"🔄 {self.toggle_hotkey}: Cycle modes (tesseract → easyocr → vision)")
         print(f"📌 Ctrl+C: Quitter")
         print(f"   Mode actuel: {self.translation_mode.upper()}")
         print("=" * 50)
