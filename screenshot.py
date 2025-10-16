@@ -56,14 +56,22 @@ class ScreenshotSelector:
         self.root.attributes('-alpha', 0.3)  # Semi-transparent
         self.root.attributes('-topmost', True)
         
+        # Forcer l'affichage du curseur même si le jeu le capture
+        self.root.config(cursor='crosshair')
+        self.root.focus_force()
+        self.root.grab_set()  # Capture tous les événements souris
+        
         # Canvas pour dessiner le rectangle
         self.canvas = tk.Canvas(
             self.root,
-            cursor='cross',
+            cursor='crosshair',  # Curseur en croix bien visible
             bg='gray',
             highlightthickness=0
         )
         self.canvas.pack(fill=tk.BOTH, expand=True)
+        
+        # Forcer le focus sur le canvas pour capturer la souris
+        self.canvas.focus_set()
         
         # Instructions
         label = tk.Label(

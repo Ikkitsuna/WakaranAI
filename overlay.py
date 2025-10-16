@@ -25,7 +25,7 @@ class TranslationOverlay:
         self.text_widget = None
         self.close_timer = None
     
-    def show(self, original_text, translated_text, auto_close=True, timeout=10):
+    def show(self, original_text, translated_text, auto_close=True, timeout=30):
         """
         Affiche l'overlay avec le texte traduit
         
