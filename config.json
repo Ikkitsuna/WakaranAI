@@ -1,4 +1,6 @@
 {
+  "translation_mode": "vision",
+  "vision_model": "gemma3:4b",
   "ollama_model": "gemma2:2b",
   "ollama_url": "http://localhost:11434",
   "source_lang": "en",
