@@ -20,12 +20,13 @@ Permet de traduire instantanément les textes de jeux non traduits en capturant 
 
 - **Trois modes de traduction** : Tesseract (rapide), EasyOCR (précis) ou Vision (contexte)
 - **Auto-détection de langue** : Détecte automatiquement la langue du texte (japonais, coréen, chinois, etc.)
-- Hotkey globale (F9) pour capturer et traduire
-- Hotkey de toggle (F10) pour changer de mode en temps réel
+- **Raccourcis personnalisables** : Évitez les conflits avec les jeux grâce aux combinaisons de touches
+- Hotkey globale (`Ctrl+Shift+T`) pour capturer et traduire
+- Hotkey de toggle (`Ctrl+Shift+M`) pour changer de mode en temps réel
 - Sélection visuelle de la zone à traduire
 - Traduction via Ollama (100% local)
 - Overlay transparent avec auto-fermeture configurable (60s par défaut)
-- Configuration via fichier JSON
+- **Interface de configuration** graphique pour tout personnaliser
 
 ## 🚀 Modes de traduction
 
@@ -53,10 +54,10 @@ Permet de traduire instantanément les textes de jeux non traduits en capturant 
 
 ### Basculer entre les modes
 
-**En jeu** : Appuyez sur `F10` pour cycler entre les modes !
+**En jeu** : Appuyez sur `Ctrl+Shift+M` pour cycler entre les modes !
 
 ```
-Tesseract → F10 → EasyOCR → F10 → Vision → F10 → Tesseract...
+Tesseract → Ctrl+Shift+M → EasyOCR → Ctrl+Shift+M → Vision → Ctrl+Shift+M → Tesseract...
 ```
 
 ### 🔍 Auto-détection de langue
@@ -178,16 +179,16 @@ Vous pouvez aussi éditer directement `config.json` :
 
 ### Choix du mode par défaut
 
-- **Pour gaming** : `"translation_mode": "ocr"` (par défaut)
+- **Pour gaming** : `"translation_mode": "tesseract"` (par défaut)
 - **Pour screenshots** : `"translation_mode": "vision"`
 
-Vous pouvez toujours changer avec F10 en temps réel !
+Vous pouvez toujours changer avec `Ctrl+Shift+M` en temps réel !
 
 ## 🎯 Utilisation
 
 ### Lancement rapide
 
-Double-cliquez sur **`RUN.bat`** pour lancer Game Translator.
+Double-cliquez sur **`RUN.bat`** pour lancer WakaranAI.
 
 ### Lancement manuel
 
@@ -195,7 +196,7 @@ Double-cliquez sur **`RUN.bat`** pour lancer Game Translator.
 # Démarrer Ollama (dans un terminal séparé)
 ollama serve
 
-# Lancer Game Translator
+# Lancer WakaranAI
 venv311\Scripts\python main.py
 ```
 
@@ -212,14 +213,14 @@ venv311\Scripts\python main.py
 
 Vous devriez voir :
 ```
-🎮 Game Translator - Initialisation...
+🎮 WakaranAI - Initialisation...
 ==================================================
 ✅ Configuration chargée depuis 'config.json'
    Mode: OCR
    Modèle: gemma2:2b
    OCR: tesseract
    Traduction: en → fr
-   Hotkey: F9
+   Hotkey: Ctrl+Shift+T
 ✅ Tesseract sélectionné
 ==================================================
 
@@ -232,10 +233,10 @@ Vous devriez voir :
 --------------------------------------------------
 
 ==================================================
-✅ GAME TRANSLATOR PRÊT!
+✅ WAKARANAI PRÊT!
 ==================================================
-📌 F9: Commencer une traduction
-� F10: Changer de mode (vision ⇄ ocr)
+📌 Ctrl+Shift+T: Commencer une traduction
+� Ctrl+Shift+M: Changer de mode (vision ⇄ ocr)
 📌 Ctrl+C: Quitter
    Mode actuel: OCR
 ==================================================
