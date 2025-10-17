@@ -1,4 +1,10 @@
-# Game Translator
+# 🎮 Game Translator
+
+[![Python](https://img.shields.io/badge/python-3.11%20%7C%203.12-blue.svg)](https://www.python.org/downloads/)
+[![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+[![Platform](https://img.shields.io/badge/platform-Windows-blue.svg)](https://www.microsoft.com/windows)
+[![Ollama](https://img.shields.io/badge/Ollama-Required-orange.svg)](https://ollama.ai/)
+[![Stars](https://img.shields.io/github/stars/VotreUsername/ProjectRosetaAI?style=social)](https://github.com/VotreUsername/ProjectRosetaAI)
 
 Outil de traduction en temps réel pour jeux vidéo utilisant l'OCR/Vision et l'IA locale (Ollama).
 
