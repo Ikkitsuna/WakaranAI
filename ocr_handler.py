@@ -32,7 +32,14 @@ class OCRHandler:
                 import easyocr
                 print(f"📦 Initialisation EasyOCR avec langues: {', '.join(languages)}")
                 print("   ⏳ Cela peut prendre quelques secondes...")
-                self.reader = easyocr.Reader(languages, gpu=True)
+                
+                # EasyOCR a des contraintes de compatibilité de langues
+                # Japonais uniquement compatible avec anglais
+                fixed_languages = self._fix_easyocr_language_compatibility(languages)
+                if fixed_languages != languages:
+                    print(f"   ℹ️ Langues ajustées pour compatibilité EasyOCR: {', '.join(fixed_languages)}")
+                
+                self.reader = easyocr.Reader(fixed_languages, gpu=True)
                 print("✅ EasyOCR initialisé")
             except ImportError:
                 print("⚠️ EasyOCR n'est pas installé (nécessite Python 3.11 ou 3.12)")
@@ -66,6 +73,38 @@ class OCRHandler:
                 print("❌ Tesseract non installé!")
                 raise
     
+    def _fix_easyocr_language_compatibility(self, languages):
+        """
+        Corrige les incompatibilités de langues pour EasyOCR
+        
+        EasyOCR a des contraintes :
+        - Japonais (ja) uniquement compatible avec anglais (en)
+        - Coréen (ko) uniquement compatible avec anglais (en)
+        - Chinois compatible avec d'autres langues
+        
+        Args:
+            languages: Liste des langues demandées
+            
+        Returns:
+            list: Liste corrigée des langues
+        """
+        # Langues asiatiques qui nécessitent l'anglais
+        asian_langs_need_en = {'ja', 'ko'}
+        
+        fixed = list(languages)
+        
+        # Si on a du japonais ou coréen
+        if any(lang in asian_langs_need_en for lang in languages):
+            # S'assurer que 'en' est présent
+            if 'en' not in fixed:
+                fixed.append('en')
+            
+            # Retirer les langues latines autres que l'anglais (fr, es, de, etc.)
+            latin_langs = {'fr', 'es', 'de', 'it', 'pt', 'ru', 'ar', 'th'}
+            fixed = [lang for lang in fixed if lang not in latin_langs]
+        
+        return fixed
+    
     def extract_text(self, image):
         """
         Extrait le texte d'une image avec auto-détection optionnelle des langues
@@ -74,12 +113,13 @@ class OCRHandler:
             image: PIL.Image
             
         Returns:
-            str: Texte détecté (vide si rien trouvé)
+            tuple: (text, detected_lang) où detected_lang est le code de langue principale détectée
         """
         if not image:
-            return ""
+            return "", None
         
         start_time = time.time()
+        detected_lang = None
         
         try:
             # Si auto-détection activée avec Tesseract, faire une passe rapide
@@ -91,11 +131,31 @@ class OCRHandler:
                 if quick_text and len(quick_text.strip()) > 3:
                     # Détecter les langues
                     detected_langs = self.language_detector.detect_language(quick_text)
+                    detected_lang = detected_langs[0] if detected_langs else None
                     
                     # Si différent de la config, ré-extraire avec langues détectées
-                    if set(detected_langs) != set(self.languages):
+                    if detected_langs and set(detected_langs) != set(self.languages):
                         print(f"🔍 Auto-détection: {', '.join(detected_langs)} (config: {', '.join(self.languages)})")
                         self.last_detected_languages = detected_langs
+                        
+                        # Sauvegarder config originale et extraire avec langues détectées
+                        original_langs = self.languages
+                        self.languages = detected_langs
+                        text = self._extract_with_tesseract(image)
+                        self.languages = original_langs
+                        
+                        elapsed = time.time() - start_time
+                        print(f"⏱️ OCR terminé en {elapsed:.2f}s")
+                        text = text.strip()
+                        
+                        if text:
+                            print(f"✅ Texte détecté ({len(text)} caractères):")
+                            print(f"   '{text[:100]}{'...' if len(text) > 100 else ''}'")
+                            print(f"   📝 Langue principale: {detected_lang}")
+                        else:
+                            print("⚠️ Aucun texte détecté")
+                        
+                        return text, detected_lang
                         
                         # Sauvegarder config originale
                         original_langs = self.languages
@@ -110,17 +170,22 @@ class OCRHandler:
                         if text:
                             print(f"✅ Texte détecté ({len(text)} caractères):")
                             print(f"   '{text[:100]}{'...' if len(text) > 100 else ''}'")
-                            print(f"   📝 Langues auto-détectées: {', '.join(detected_langs)}")
+                            print(f"   📝 Langue principale: {detected_lang}")
                         else:
                             print("⚠️ Aucun texte détecté")
                         
-                        return text
+                        return text, detected_lang
             
             # Extraction normale
             if self.engine == 'easyocr':
                 text = self._extract_with_easyocr(image)
             else:
                 text = self._extract_with_tesseract(image)
+            
+            # Si auto-détection et pas encore fait, détecter maintenant
+            if self.auto_detect and detected_lang is None and text and len(text.strip()) > 3:
+                detected_langs = self.language_detector.detect_language(text)
+                detected_lang = detected_langs[0] if detected_langs else None
             
             elapsed = time.time() - start_time
             print(f"⏱️ OCR terminé en {elapsed:.2f}s")
@@ -131,14 +196,16 @@ class OCRHandler:
             if text:
                 print(f"✅ Texte détecté ({len(text)} caractères):")
                 print(f"   '{text[:100]}{'...' if len(text) > 100 else ''}'")
+                if detected_lang:
+                    print(f"   📝 Langue détectée: {detected_lang}")
             else:
                 print("⚠️ Aucun texte détecté")
             
-            return text
+            return text, detected_lang
             
         except Exception as e:
             print(f"❌ Erreur OCR: {e}")
-            return ""
+            return "", None
     
     def _extract_with_tesseract(self, image):
         """Extraction avec Tesseract"""

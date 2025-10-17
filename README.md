@@ -66,26 +66,47 @@ Pour désactiver l'auto-détection, modifier `config.json` :
 }
 ```
 
-## Installation
+## 🚀 Installation Rapide
 
-### Prérequis
+### Option 1 : Installation automatique (Recommandée)
 
-1. **Python 3.10+** installé
-2. **Ollama** installé et lancé localement
-3. **Tesseract OCR** installé (pour le mode OCR)
+1. Téléchargez le projet (ZIP ou `git clone`)
+2. Double-cliquez sur **`INSTALL.bat`**
+3. Attendez la fin de l'installation
+4. C'est prêt ! 🎉
 
-### 1. Installer Tesseract OCR
+### Option 2 : Installation manuelle
 
-Téléchargez depuis [tesseract-ocr](https://github.com/UB-Mannheim/tesseract/wiki) et installez-le.
+#### Prérequis
 
-### 2. Installer Ollama et les modèles
+1. **Python 3.11 ou 3.12** ([Télécharger ici](https://www.python.org/downloads/))
+   - ⚠️ **IMPORTANT** : Cocher "Add Python to PATH" lors de l'installation !
+2. **Ollama** ([Télécharger ici](https://ollama.ai/))
+3. **Tesseract OCR** ([Télécharger ici](https://github.com/UB-Mannheim/tesseract/wiki))
+   - Ajouter au PATH : `C:\Program Files\Tesseract-OCR`
+4. **Git** (optionnel, pour les mises à jour) ([Télécharger ici](https://git-scm.com/))
+
+#### Étapes d'installation manuelle
+
+```bash
+# 1. Créer l'environnement virtuel
+python -m venv venv311
+
+# 2. Activer l'environnement (Windows)
+venv311\Scripts\activate
+
+# 3. Installer les dépendances
+pip install -r requirements.txt
+```
+
+#### Installer Ollama et les modèles
 
 1. Installez Ollama : [https://ollama.ai](https://ollama.ai)
 2. Téléchargez les modèles :
    ```bash
-   # Pour mode OCR (rapide, recommandé)
+   # Pour modes OCR (rapide, recommandé)
    ollama pull gemma2:2b
-   
+
    # Pour mode Vision (précis, optionnel)
    ollama pull gemma3:4b
    ```
@@ -94,51 +115,44 @@ Téléchargez depuis [tesseract-ocr](https://github.com/UB-Mannheim/tesseract/wi
    ollama serve
    ```
 
-### Étape 3 : Installer les dépendances Python
-
-**Pour mode Tesseract (rapide) - Python 3.10+** :
-```bash
-cd ProjectRosetaAI
-pip install -r requirements.txt
-```
-
-**Pour mode EasyOCR (précis, langues asiatiques) - Python 3.11 ou 3.12** :
-```bash
-# IMPORTANT: EasyOCR nécessite Python 3.11 ou 3.12 (PAS 3.14)
-# Installer Python 3.11: py install 3.11
-# Créer un venv avec Python 3.11: py -3.11 -m venv venv311
-
-# Activer le venv Python 3.11
-.\venv311\Scripts\Activate.ps1
-
-# Installer EasyOCR et dépendances
-pip install -r requirements-easyocr.txt
-```
-
-**Note** : EasyOCR est **optionnel** mais recommandé pour :
+**Note sur EasyOCR** : EasyOCR est **optionnel** mais recommandé pour :
 - 🇯🇵 Jeux japonais (kanji, hiragana, katakana)
 - 🇨🇳 Jeux chinois (simplifié et traditionnel)
 - 🇰🇷 Jeux coréens (hangul)
 - 🎨 Polices exotiques/stylisées
 
+Pour activer EasyOCR : Décommentez les lignes dans `requirements.txt` et relancez `INSTALL.bat`
+
 ---
 
-## Configuration
+## ⚙️ Configuration
 
-Éditez `config.json` :
+### Interface graphique (Recommandée)
+
+Double-cliquez sur **`CONFIGURE.bat`** pour ouvrir l'interface de configuration et personnaliser :
+- 🎯 **Raccourcis clavier** (hotkeys personnalisables)
+- 🌍 **Langues** source et cible
+- ⚙️ **Mode de traduction** par défaut
+- ⏱️ **Durée d'affichage** de l'overlay
+- 🤖 **Modèles Ollama**
+
+### Configuration manuelle (config.json)
+
+Vous pouvez aussi éditer directement `config.json` :
 
 ```json
 {
-  "translation_mode": "ocr",          // "ocr" (rapide) ou "vision" (précis)
-  "vision_model": "gemma3:4b",        // Modèle pour mode vision
-  "ollama_model": "gemma2:2b",        // Modèle pour mode OCR
+  "translation_mode": "tesseract",
+  "vision_model": "gemma3:4b",
+  "ollama_model": "gemma2:2b",
   "ollama_url": "http://localhost:11434",
   "source_lang": "en",
   "target_lang": "fr",
-  "hotkey": "F9",                     // Capturer et traduire
-  "toggle_mode_hotkey": "F10",        // Changer de mode
-  "ocr_engine": "tesseract",
-  "overlay_timeout": 60               // Temps d'affichage de l'overlay (secondes)
+  "ocr_languages": ["ja", "en"],
+  "auto_detect_language": true,
+  "hotkey": "ctrl+shift+t",
+  "toggle_mode_hotkey": "ctrl+shift+m",
+  "overlay_timeout": 60
 }
 ```
 
@@ -157,13 +171,32 @@ pip install -r requirements-easyocr.txt
 
 Vous pouvez toujours changer avec F10 en temps réel !
 
-## Utilisation
+## 🎯 Utilisation
 
-### Lancer l'application
+### Lancement rapide
+
+Double-cliquez sur **`RUN.bat`** pour lancer Game Translator.
+
+### Lancement manuel
 
 ```bash
-python main.py
+# Démarrer Ollama (dans un terminal séparé)
+ollama serve
+
+# Lancer Game Translator
+venv311\Scripts\python main.py
 ```
+
+### Raccourcis par défaut
+
+- **`Ctrl+Shift+T`** : Traduire une zone de l'écran
+- **`Ctrl+Shift+M`** : Changer de mode (Tesseract ↔ EasyOCR ↔ Vision)
+- **`Échap`** : Annuler la sélection
+- **`Ctrl+C`** : Quitter l'application (dans la console)
+
+> 💡 **Astuce** : Utilisez des combinaisons avec modificateurs (Ctrl, Shift, Alt) pour éviter les conflits avec les jeux !
+
+### À quoi ressemble le démarrage
 
 Vous devriez voir :
 ```
@@ -199,55 +232,103 @@ Vous devriez voir :
 ### Workflow
 
 1. Lancez votre jeu
-2. Appuyez sur **F9** pour capturer
+2. Appuyez sur **`Ctrl+Shift+T`** pour capturer
 3. Dessinez un rectangle sur la zone à traduire
-4. Attendez la traduction (2-5s en OCR, 10-30s en Vision)
-5. Lisez la traduction dans l'overlay (reste 30 secondes)
-6. Si trop lent, appuyez sur **F10** pour passer en mode OCR rapide !
+4. Attendez la traduction (2-5s en Tesseract, 5-10s en EasyOCR, 10-30s en Vision)
+5. Lisez la traduction dans l'overlay (reste 60 secondes par défaut)
+6. Si trop lent, appuyez sur **`Ctrl+Shift+M`** pour passer en mode Tesseract rapide !
 
-## Dépannage
+## 🔄 Mise à jour
+
+### Avec Git (recommandé)
+
+Double-cliquez sur **`UPDATE.bat`** pour mettre à jour automatiquement le code et les dépendances.
+
+### Sans Git
+
+1. Téléchargez la dernière version depuis GitHub
+2. Remplacez les fichiers (sauf `config.json`)
+3. Lancez `UPDATE.bat` pour mettre à jour les dépendances
+
+## 📁 Fichiers principaux
+
+```
+ProjectRosetaAI/
+├── INSTALL.bat            # 🔧 Installation automatique
+├── RUN.bat                # ▶️ Lancement rapide
+├── CONFIGURE.bat          # ⚙️ Interface de configuration
+├── UPDATE.bat             # 🔄 Mise à jour automatique
+├── main.py                # Point d'entrée principal
+├── config_gui.py          # Interface de configuration
+├── config.json            # Configuration (créé au 1er lancement)
+└── venv311/               # Environnement virtuel (créé par INSTALL.bat)
+```
+
+## 🐛 Dépannage
+
+### L'overlay ne s'affiche pas
+- Vérifiez que votre raccourci n'est pas utilisé par le jeu
+- Essayez une combinaison avec `Ctrl+Shift+...`
+- Lancez `CONFIGURE.bat` pour changer les raccourcis
+
+### La souris reste capturée par le jeu
+- Passez le jeu en **mode fenêtré** (windowed ou borderless)
+- Utilisez `Échap` pour annuler la sélection
+- C'est une limitation des jeux en plein écran DirectX/OpenGL
 
 ### "Impossible de se connecter à Ollama"
-
 - Vérifiez qu'Ollama est bien lancé : `ollama serve`
 - Testez l'URL : ouvrez `http://localhost:11434` dans votre navigateur
 - Vérifiez que le port 11434 n'est pas bloqué par un firewall
 
 ### "Tesseract non trouvé" ou "TesseractNotFoundError"
-
 - Vérifiez que Tesseract est installé : `tesseract --version`
-- Sur Windows, ajoutez le chemin dans le PATH ou modifiez `ocr_handler.py` :
-  ```python
-  pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
-  ```
+- Sur Windows, ajoutez le chemin dans le PATH
+- Relancez `INSTALL.bat`
 
 ### "Aucun texte détecté"
-
 - La zone sélectionnée est peut-être trop petite ou floue
-- Essayez avec EasyOCR (plus précis) : changez `"ocr_engine": "easyocr"` dans `config.json`
+- Essayez le mode EasyOCR : `Ctrl+Shift+M` pour changer de mode
 - Le contraste du texte est peut-être trop faible
 
-## Structure du projet
+### Erreur "Module not found"
+- Relancez `INSTALL.bat`
+- Ou manuellement : `venv311\Scripts\pip install -r requirements.txt`
 
-```
-├── main.py           # Point d'entrée
-├── screenshot.py     # Capture d'écran
-├── ocr_handler.py    # OCR
-├── translator.py     # Traduction
-├── overlay.py        # Interface overlay
-└── config.json       # Configuration
-```
+### Performance lente
+- Utilisez le mode **Tesseract** pour le gaming
+- Vérifiez votre CPU/GPU (Vision mode est très intensif)
+- Réduisez la taille de la zone sélectionnée
+
+## 📝 TODO / Roadmap
+
+- [ ] Support Linux/Mac
+- [ ] Mode de sélection automatique (détection de zones de texte)
+- [ ] Historique des traductions
+- [ ] Support multi-écrans
+- [ ] Interface graphique complète (sans console)
+- [ ] Thèmes personnalisables pour l'overlay
+
+## 🤝 Contribution
+
+Les contributions sont les bienvenues ! N'hésitez pas à :
+- Ouvrir une issue pour signaler un bug
+- Proposer une fonctionnalité
+- Soumettre une pull request
+
+## 📄 License
+
+MIT License - Ce projet est sous licence MIT. Libre à vous de l'adapter à vos besoins !
+
+## 🙏 Remerciements
+
+- [Tesseract OCR](https://github.com/tesseract-ocr/tesseract)
+- [EasyOCR](https://github.com/JaidedAI/EasyOCR)
+- [Ollama](https://ollama.ai/)
+- [Gemma](https://ai.google.dev/gemma) (Google)
 
 ---
 
-## 📝 Licence
+**Développé avec ❤️ pour la communauté gaming**
 
-Ce projet est un MVP à usage personnel. Libre à vous de l'adapter à vos besoins !
-
-## Licence
-
-MIT License - Projet personnel
-
-## Crédits
-
-Construit avec Ollama, Tesseract/EasyOCR et Python.
+Si vous aimez ce projet, n'oubliez pas de lui donner une ⭐ sur GitHub !

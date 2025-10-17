@@ -66,8 +66,8 @@ class GameTranslator:
         self.translator = OllamaTranslator(self.config)
         
         self.is_processing = False
-        self.hotkey = self.config.get('hotkey', 'F9')
-        self.toggle_hotkey = self.config.get('toggle_mode_hotkey', 'F10')
+        self.hotkey = self.config.get('hotkey', 'ctrl+shift+t')
+        self.toggle_hotkey = self.config.get('toggle_mode_hotkey', 'ctrl+shift+m')
         
         print("=" * 50)
     
@@ -226,8 +226,8 @@ class GameTranslator:
                 mode_name = "Tesseract" if self.translation_mode == 'tesseract' else "EasyOCR"
                 print(f"\n🔍 Mode {mode_name}: Extraction puis traduction...")
                 
-                # Étape 2: OCR
-                text = self.ocr.extract_text(image)
+                # Étape 2: OCR avec détection de langue
+                text, detected_lang = self.ocr.extract_text(image)
                 
                 if not text or len(text.strip()) < 2:
                     print("❌ Aucun texte détecté dans la zone sélectionnée")
@@ -235,9 +235,13 @@ class GameTranslator:
                     self.is_processing = False
                     return
                 
-                # Étape 3: Traduction
+                # Étape 3: Traduction avec langue source détectée
                 print("\n🌐 Traduction du texte...")
-                translated = self.translator.translate(text)
+                if detected_lang:
+                    print(f"   📝 Langue source auto-détectée: {detected_lang}")
+                    translated = self.translator.translate(text, source_lang=detected_lang)
+                else:
+                    translated = self.translator.translate(text)
             
             # Restaurer le mode original si fallback temporaire
             original_mode = self.config.get('translation_mode', 'tesseract')
@@ -307,7 +311,8 @@ class GameTranslator:
                 self.ocr_easyocr = OCRHandler(engine='easyocr', languages=ocr_languages, auto_detect=auto_detect)
             
             # Vérifier si EasyOCR est vraiment disponible
-            if self.ocr_easyocr and self.ocr_easyocr.engine == 'easyocr':
+            # On vérifie que le reader EasyOCR a été chargé (pas juste un fallback Tesseract)
+            if self.ocr_easyocr and self.ocr_easyocr.reader is not None:
                 self.ocr = self.ocr_easyocr
                 print("\n" + "🔄" * 25)
                 print("🎯 PASSAGE EN MODE EASYOCR (PRÉCIS)")
@@ -392,6 +397,15 @@ class GameTranslator:
 
 def main():
     """Point d'entrée principal"""
+    # Vérifier les arguments de ligne de commande
+    if len(sys.argv) > 1 and sys.argv[1] in ['--config', '-c', 'config']:
+        # Lancer l'interface de configuration
+        from config_gui import ConfigGUI
+        print("🎮 Lancement de l'interface de configuration...")
+        config_app = ConfigGUI()
+        config_app.run()
+        return
+
     try:
         app = GameTranslator()
         app.run()

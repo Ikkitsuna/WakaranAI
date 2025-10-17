@@ -30,7 +30,14 @@ class OllamaTranslator:
             'it': 'Italian',
             'ja': 'Japanese',
             'ko': 'Korean',
-            'zh': 'Chinese'
+            'zh': 'Chinese',
+            'ch_sim': 'Chinese (Simplified)',
+            'ch_tra': 'Chinese (Traditional)',
+            'ru': 'Russian',
+            'ar': 'Arabic',
+            'th': 'Thai',
+            'vi': 'Vietnamese',
+            'pt': 'Portuguese'
         }
     
     def test_connection(self):
@@ -69,12 +76,13 @@ class OllamaTranslator:
             print(f"❌ Erreur lors du test de connexion: {e}")
             return False
     
-    def translate(self, text):
+    def translate(self, text, source_lang=None):
         """
         Traduit un texte
         
         Args:
             text: Texte à traduire
+            source_lang: Langue source (optionnel, auto-détecté si fourni)
             
         Returns:
             str: Texte traduit ou message d'erreur
@@ -82,12 +90,17 @@ class OllamaTranslator:
         if not text or not text.strip():
             return "⚠️ Aucun texte à traduire"
         
+        # Utiliser la langue source fournie ou celle de la config
+        if source_lang is None:
+            source_lang = self.source_lang
+        
+        source_lang_name = self.lang_names.get(source_lang, source_lang)
         target_lang_name = self.lang_names.get(self.target_lang, self.target_lang)
         
-        # Prompt optimisé pour la traduction
-        prompt = f"Translate this to {target_lang_name}, only output the translation without any explanation:\n\n{text}"
+        # Prompt optimisé pour la traduction avec langue source explicite
+        prompt = f"Translate the following {source_lang_name} text to {target_lang_name}. Output ONLY the translation, no explanations:\n\n{text}"
         
-        print(f"🌐 Traduction en cours ({self.source_lang} → {self.target_lang})...")
+        print(f"🌐 Traduction en cours ({source_lang_name} → {target_lang_name})...")
         print(f"   Texte: '{text[:50]}{'...' if len(text) > 50 else ''}'")
         
         start_time = time.time()

@@ -55,11 +55,24 @@ class ScreenshotSelector:
         self.root.attributes('-fullscreen', True)
         self.root.attributes('-alpha', 0.3)  # Semi-transparent
         self.root.attributes('-topmost', True)
-        
+
         # Forcer l'affichage du curseur même si le jeu le capture
         self.root.config(cursor='crosshair')
-        self.root.focus_force()
-        self.root.grab_set()  # Capture tous les événements souris
+
+        # Techniques multiples pour forcer la capture de la souris
+        self.root.overrideredirect(False)  # Garder les contrôles de fenêtre pour éviter les problèmes
+        self.root.lift()  # Élever la fenêtre au-dessus de tout
+        self.root.focus_force()  # Forcer le focus
+        self.root.grab_set_global()  # Capture GLOBALE de tous les événements (plus fort que grab_set)
+
+        # S'assurer que le focus reste sur notre fenêtre
+        def keep_focus():
+            if self.root:
+                self.root.lift()
+                self.root.focus_force()
+                self.root.after(100, keep_focus)  # Répéter toutes les 100ms
+
+        keep_focus()
         
         # Canvas pour dessiner le rectangle
         self.canvas = tk.Canvas(

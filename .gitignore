@@ -47,3 +47,7 @@ screenshots/
 
 # Config personnalisée (si vous voulez garder la config par défaut dans git)
 # config.json
+config.json.backup
+
+# Fichiers de test
+test_*.py
