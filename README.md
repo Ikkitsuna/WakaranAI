@@ -1,150 +1,142 @@
-# 🎮 Game Translator
+# 🎮 WakaranAI
 
 [![Python](https://img.shields.io/badge/python-3.11%20%7C%203.12-blue.svg)](https://www.python.org/downloads/)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 [![Platform](https://img.shields.io/badge/platform-Windows-blue.svg)](https://www.microsoft.com/windows)
 [![Ollama](https://img.shields.io/badge/Ollama-Required-orange.svg)](https://ollama.ai/)
-[![Stars](https://img.shields.io/github/stars/VotreUsername/ProjectRosetaAI?style=social)](https://github.com/VotreUsername/ProjectRosetaAI)
+[![Stars](https://img.shields.io/github/stars/Ikkitsuna/WakaranAI?style=social)](https://github.com/Ikkitsuna/WakaranAI)
 
-Outil de traduction en temps réel pour jeux vidéo utilisant l'OCR/Vision et l'IA locale (Ollama).
+> **From わからない (I don't understand) to わかった (I understand)!**
 
-Permet de traduire instantanément les textes de jeux non traduits en capturant une zone de l'écran.
+**[🇫🇷 Version Française](README_FR.md)** | **[🇯🇵 日本語版](README_JA.md)** *(coming soon)*
 
-## Fonctionnalités
+Real-time universal translator for video games using OCR/Vision and local AI (Ollama).
 
-- **Trois modes de traduction** : Tesseract (rapide), EasyOCR (précis) ou Vision (contexte)
-- **Auto-détection de langue** : Détecte automatiquement la langue du texte (japonais, coréen, chinois, etc.)
-- Hotkey globale (F9) pour capturer et traduire
-- Hotkey de toggle (F10) pour changer de mode en temps réel
-- Sélection visuelle de la zone à traduire
-- Traduction via Ollama (100% local)
-- Overlay transparent avec auto-fermeture configurable (60s par défaut)
-- Configuration via fichier JSON
+Instantly translate untranslated game texts by capturing any screen area.
 
-## 🚀 Modes de traduction
+---
 
-### 1. Mode Tesseract (Rapide ⚡)
-- **Pipeline** : Screenshot → Tesseract OCR → LLM traduction
-- **Vitesse** : ⚡ Très rapide (2-5 secondes)
-- **Précision** : ✅ Bonne pour textes clairs
-- **Usage GPU** : Minimal (bon pour gaming)
-- **Idéal pour** : Jeux en cours, textes simples, langues européennes
+## ✨ Features
 
-### 2. Mode EasyOCR (Précis 🎯)
-- **Pipeline** : Screenshot → EasyOCR → LLM traduction
-- **Vitesse** : ⚡⚡ Rapide (5-10 secondes)
-- **Précision** : ✅✅ Excellente pour langues asiatiques
-- **Usage GPU** : Moyen (avec CUDA) ou CPU
-- **Idéal pour** : Japonais, Coréen, Chinois, 80+ langues
-- **Note** : Nécessite Python 3.11 ou 3.12
+- **Three translation modes**: Tesseract (fast), EasyOCR (accurate), or Vision (context-aware)
+- **Automatic language detection**: Detects source language automatically (Japanese, Korean, Chinese, etc.)
+- **Customizable hotkeys**: Prevent conflicts with games using modifier combinations
+- **Global hotkey** to capture and translate on the fly
+- **Mode switching hotkey** to cycle between translation modes in real-time
+- **Visual area selection** for precise text capture
+- **100% local translation** via Ollama (privacy-friendly)
+- **Elegant transparent overlay** with auto-close (configurable timeout)
+- **Configuration GUI** for easy setup
 
-### 3. Mode Vision (Contexte 🔍)
-- **Pipeline** : Screenshot → Vision Model → Traduction directe
-- **Vitesse** : 🐌 Lent (10-30 secondes)
-- **Précision** : ✅✅✅ Excellente, comprend le contexte visuel
-- **Usage GPU** : Élevé (peut lag si jeu actif)
-- **Idéal pour** : Screenshots, textes stylisés, jeu en pause
+---
 
-### Basculer entre les modes
+## 🚀 Translation Modes
 
-**En jeu** : Appuyez sur `F10` pour cycler entre les modes !
+### 1. Tesseract Mode (Fast ⚡)
+- **Pipeline**: Screenshot → Tesseract OCR → LLM translation
+- **Speed**: ⚡ Very fast (2-5 seconds)
+- **Accuracy**: ✅ Good for clear text
+- **GPU Usage**: Minimal (great for gaming)
+- **Best for**: Active gameplay, simple text, European languages
+
+### 2. EasyOCR Mode (Accurate 🎯)
+- **Pipeline**: Screenshot → EasyOCR → LLM translation
+- **Speed**: ⚡⚡ Fast (5-10 seconds)
+- **Accuracy**: ✅✅ Excellent for Asian languages
+- **GPU Usage**: Medium (with CUDA) or CPU
+- **Best for**: Japanese, Korean, Chinese, 80+ languages
+- **Note**: Requires Python 3.11 or 3.12
+
+### 3. Vision Mode (Context-Aware 🔍)
+- **Pipeline**: Screenshot → Vision Model → Direct translation
+- **Speed**: 🐌 Slow (10-30 seconds)
+- **Accuracy**: ✅✅✅ Excellent, understands visual context
+- **GPU Usage**: High (may cause lag during gameplay)
+- **Best for**: Screenshots, stylized text, paused games
+
+### Switch Between Modes
+
+**In-game**: Press `Ctrl+Shift+M` to cycle through modes!
 
 ```
-Tesseract → F10 → EasyOCR → F10 → Vision → F10 → Tesseract...
+Tesseract → Ctrl+Shift+M → EasyOCR → Ctrl+Shift+M → Vision → Ctrl+Shift+M → Tesseract...
 ```
 
-### 🔍 Auto-détection de langue
+---
 
-Par défaut, le système détecte **automatiquement** la langue du texte capturé :
+## 🚀 Quick Installation
 
-- ✅ **Japonais** (Hiragana, Katakana, Kanji) → Auto-configure pour `ja`
-- ✅ **Coréen** (Hangul) → Auto-configure pour `ko`
-- ✅ **Chinois** (caractères CJK) → Auto-configure pour `ja` (compatibilité)
-- ✅ **Arabe, Russe, Cyrillique** → Auto-configurés
-- ✅ **Texte mixte** → Détecte les multiples langues
+### Option 1: Automatic Installation (Recommended)
 
-**Plus besoin de configurer `ocr_languages` manuellement !**
+1. Download the project (ZIP or `git clone`)
+2. Double-click **`INSTALL.bat`**
+3. Wait for installation to complete
+4. Done! 🎉
 
-Pour désactiver l'auto-détection, modifier `config.json` :
-```json
-{
-  "auto_detect_language": false
-}
-```
+### Option 2: Manual Installation
 
-## 🚀 Installation Rapide
+#### Prerequisites
 
-### Option 1 : Installation automatique (Recommandée)
+1. **Python 3.11 or 3.12** ([Download here](https://www.python.org/downloads/))
+   - ⚠️ **IMPORTANT**: Check "Add Python to PATH" during installation!
+2. **Ollama** ([Download here](https://ollama.ai/))
+3. **Tesseract OCR** ([Download here](https://github.com/UB-Mannheim/tesseract/wiki))
+   - Add to PATH: `C:\Program Files\Tesseract-OCR`
+4. **Git** (optional, for updates) ([Download here](https://git-scm.com/))
 
-1. Téléchargez le projet (ZIP ou `git clone`)
-2. Double-cliquez sur **`INSTALL.bat`**
-3. Attendez la fin de l'installation
-4. C'est prêt ! 🎉
-
-### Option 2 : Installation manuelle
-
-#### Prérequis
-
-1. **Python 3.11 ou 3.12** ([Télécharger ici](https://www.python.org/downloads/))
-   - ⚠️ **IMPORTANT** : Cocher "Add Python to PATH" lors de l'installation !
-2. **Ollama** ([Télécharger ici](https://ollama.ai/))
-3. **Tesseract OCR** ([Télécharger ici](https://github.com/UB-Mannheim/tesseract/wiki))
-   - Ajouter au PATH : `C:\Program Files\Tesseract-OCR`
-4. **Git** (optionnel, pour les mises à jour) ([Télécharger ici](https://git-scm.com/))
-
-#### Étapes d'installation manuelle
+#### Manual Setup Steps
 
 ```bash
-# 1. Créer l'environnement virtuel
+# 1. Create virtual environment
 python -m venv venv311
 
-# 2. Activer l'environnement (Windows)
+# 2. Activate environment (Windows)
 venv311\Scripts\activate
 
-# 3. Installer les dépendances
+# 3. Install dependencies
 pip install -r requirements.txt
 ```
 
-#### Installer Ollama et les modèles
+#### Install Ollama and Models
 
-1. Installez Ollama : [https://ollama.ai](https://ollama.ai)
-2. Téléchargez les modèles :
+1. Install Ollama: [https://ollama.ai](https://ollama.ai)
+2. Download models:
    ```bash
-   # Pour modes OCR (rapide, recommandé)
+   # For OCR modes (fast, recommended)
    ollama pull gemma2:2b
 
-   # Pour mode Vision (précis, optionnel)
+   # For Vision mode (accurate, optional)
    ollama pull gemma3:4b
    ```
-3. Lancez le serveur Ollama :
+3. Start Ollama server:
    ```bash
    ollama serve
    ```
 
-**Note sur EasyOCR** : EasyOCR est **optionnel** mais recommandé pour :
-- 🇯🇵 Jeux japonais (kanji, hiragana, katakana)
-- 🇨🇳 Jeux chinois (simplifié et traditionnel)
-- 🇰🇷 Jeux coréens (hangul)
-- 🎨 Polices exotiques/stylisées
+**Note about EasyOCR**: EasyOCR is **optional** but recommended for:
+- 🇯🇵 Japanese games (kanji, hiragana, katakana)
+- 🇨🇳 Chinese games (simplified and traditional)
+- 🇰🇷 Korean games (hangul)
+- 🎨 Exotic/stylized fonts
 
-Pour activer EasyOCR : Décommentez les lignes dans `requirements.txt` et relancez `INSTALL.bat`
+To enable EasyOCR: Uncomment lines in `requirements.txt` and re-run `INSTALL.bat`
 
 ---
 
 ## ⚙️ Configuration
 
-### Interface graphique (Recommandée)
+### Graphical Interface (Recommended)
 
-Double-cliquez sur **`CONFIGURE.bat`** pour ouvrir l'interface de configuration et personnaliser :
-- 🎯 **Raccourcis clavier** (hotkeys personnalisables)
-- 🌍 **Langues** source et cible
-- ⚙️ **Mode de traduction** par défaut
-- ⏱️ **Durée d'affichage** de l'overlay
-- 🤖 **Modèles Ollama**
+Double-click **`CONFIGURE.bat`** to open the configuration interface and customize:
+- 🎯 **Keyboard shortcuts** (customizable hotkeys)
+- 🌍 **Source and target languages**
+- ⚙️ **Default translation mode**
+- ⏱️ **Overlay display duration**
+- 🤖 **Ollama models**
 
-### Configuration manuelle (config.json)
+### Manual Configuration (config.json)
 
-Vous pouvez aussi éditer directement `config.json` :
+You can also directly edit `config.json`:
 
 ```json
 {
@@ -162,171 +154,148 @@ Vous pouvez aussi éditer directement `config.json` :
 }
 ```
 
-### Options de configuration
+### Configuration Options
 
-- **overlay_timeout** : Durée d'affichage de l'overlay en secondes
-  - Par défaut : `60` (1 minute)
-  - Si vous lisez vite : `30` secondes
-  - Si vous lisez lentement : `90` ou `120` secondes
-  - Pour ne jamais fermer automatiquement : mettre une grande valeur comme `3600`
+- **overlay_timeout**: Overlay display duration in seconds
+  - Default: `60` (1 minute)
+  - Fast readers: `30` seconds
+  - Slow readers: `90` or `120` seconds
 
-### Choix du mode par défaut
+- **Supported language codes**: `en`, `fr`, `es`, `de`, `it`, `pt`, `ja`, `ko`, `zh`
 
-- **Pour gaming** : `"translation_mode": "ocr"` (par défaut)
-- **Pour screenshots** : `"translation_mode": "vision"`
+---
 
-Vous pouvez toujours changer avec F10 en temps réel !
+## 🎯 Usage
 
-## 🎯 Utilisation
+### Quick Launch
 
-### Lancement rapide
+Double-click **`RUN.bat`** to start WakaranAI.
 
-Double-cliquez sur **`RUN.bat`** pour lancer Game Translator.
-
-### Lancement manuel
+### Manual Launch
 
 ```bash
-# Démarrer Ollama (dans un terminal séparé)
+# Start Ollama (in separate terminal)
 ollama serve
 
-# Lancer Game Translator
+# Launch WakaranAI
 venv311\Scripts\python main.py
 ```
 
-### Raccourcis par défaut
+### Default Shortcuts
 
-- **`Ctrl+Shift+T`** : Traduire une zone de l'écran
-- **`Ctrl+Shift+M`** : Changer de mode (Tesseract ↔ EasyOCR ↔ Vision)
-- **`Échap`** : Annuler la sélection
-- **`Ctrl+C`** : Quitter l'application (dans la console)
+- **`Ctrl+Shift+T`**: Translate screen area
+- **`Ctrl+Shift+M`**: Switch mode (Tesseract ↔ EasyOCR ↔ Vision)
+- **`Escape`**: Cancel selection
+- **`Ctrl+C`**: Quit application (in console)
 
-> 💡 **Astuce** : Utilisez des combinaisons avec modificateurs (Ctrl, Shift, Alt) pour éviter les conflits avec les jeux !
-
-### À quoi ressemble le démarrage
-
-Vous devriez voir :
-```
-🎮 Game Translator - Initialisation...
-==================================================
-✅ Configuration chargée depuis 'config.json'
-   Mode: OCR
-   Modèle: gemma2:2b
-   OCR: tesseract
-   Traduction: en → fr
-   Hotkey: F9
-✅ Tesseract sélectionné
-==================================================
-
-🔍 Vérification de la configuration...
---------------------------------------------------
-📝 Mode OCR activé
-✅ Connexion Ollama OK
-📦 Modèles disponibles: gemma2:2b, gemma3:4b
-✅ Modèle 'gemma2:2b' trouvé
---------------------------------------------------
-
-==================================================
-✅ GAME TRANSLATOR PRÊT!
-==================================================
-📌 F9: Commencer une traduction
-� F10: Changer de mode (vision ⇄ ocr)
-📌 Ctrl+C: Quitter
-   Mode actuel: OCR
-==================================================
-```
+> 💡 **Tip**: Use combinations with modifiers (Ctrl, Shift, Alt) to avoid conflicts with games!
 
 ### Workflow
 
-1. Lancez votre jeu
-2. Appuyez sur **`Ctrl+Shift+T`** pour capturer
-3. Dessinez un rectangle sur la zone à traduire
-4. Attendez la traduction (2-5s en Tesseract, 5-10s en EasyOCR, 10-30s en Vision)
-5. Lisez la traduction dans l'overlay (reste 60 secondes par défaut)
-6. Si trop lent, appuyez sur **`Ctrl+Shift+M`** pour passer en mode Tesseract rapide !
+1. Launch your game
+2. Press **`Ctrl+Shift+T`** to capture
+3. Draw a rectangle around the text to translate
+4. Wait for translation (2-5s in Tesseract, 5-10s in EasyOCR, 10-30s in Vision)
+5. Read the translation in the overlay (stays 60 seconds by default)
+6. If too slow, press **`Ctrl+Shift+M`** to switch to fast Tesseract mode!
 
-## 🔄 Mise à jour
+---
 
-### Avec Git (recommandé)
+## 🔄 Updates
 
-Double-cliquez sur **`UPDATE.bat`** pour mettre à jour automatiquement le code et les dépendances.
+### With Git (recommended)
 
-### Sans Git
+Double-click **`UPDATE.bat`** to automatically update code and dependencies.
 
-1. Téléchargez la dernière version depuis GitHub
-2. Remplacez les fichiers (sauf `config.json`)
-3. Lancez `UPDATE.bat` pour mettre à jour les dépendances
+### Without Git
 
-## 📁 Fichiers principaux
+1. Download latest version from GitHub
+2. Replace files (except `config.json`)
+3. Run `UPDATE.bat` to update dependencies
+
+---
+
+## 🐛 Troubleshooting
+
+### Overlay not showing
+- Check if your shortcut is used by the game
+- Try a combination with `Ctrl+Shift+...`
+- Launch `CONFIGURE.bat` to change shortcuts
+
+### Mouse still captured by game
+- Switch game to **windowed mode** (windowed or borderless)
+- Use `Escape` to cancel selection
+- This is a limitation with fullscreen DirectX/OpenGL games
+
+### "Unable to connect to Ollama"
+- Check Ollama is running: `ollama serve`
+- Test URL: open `http://localhost:11434` in browser
+- Check port 11434 isn't blocked by firewall
+
+### "Tesseract not found" or "TesseractNotFoundError"
+- Check Tesseract is installed: `tesseract --version`
+- On Windows, add to PATH or re-run `INSTALL.bat`
+
+### "No text detected"
+- Selected area may be too small or blurry
+- Try EasyOCR mode: `Ctrl+Shift+M` to switch modes
+- Text contrast may be too low
+
+### "Module not found" error
+- Re-run `INSTALL.bat`
+- Or manually: `venv311\Scripts\pip install -r requirements.txt`
+
+### Slow performance
+- Use **Tesseract mode** for gaming
+- Check CPU/GPU (Vision mode is very intensive)
+- Reduce selected area size
+
+---
+
+## 📁 Main Files
 
 ```
-ProjectRosetaAI/
-├── INSTALL.bat            # 🔧 Installation automatique
-├── RUN.bat                # ▶️ Lancement rapide
-├── CONFIGURE.bat          # ⚙️ Interface de configuration
-├── UPDATE.bat             # 🔄 Mise à jour automatique
-├── main.py                # Point d'entrée principal
-├── config_gui.py          # Interface de configuration
-├── config.json            # Configuration (créé au 1er lancement)
-└── venv311/               # Environnement virtuel (créé par INSTALL.bat)
+WakaranAI/
+├── INSTALL.bat            # 🔧 Automatic installation
+├── RUN.bat                # ▶️ Quick launcher
+├── CONFIGURE.bat          # ⚙️ Configuration interface
+├── UPDATE.bat             # 🔄 Automatic update
+├── main.py                # Main entry point
+├── config_gui.py          # Configuration interface
+├── config.json            # Configuration (created on first run)
+└── venv311/               # Virtual environment (created by INSTALL.bat)
 ```
 
-## 🐛 Dépannage
+---
 
-### L'overlay ne s'affiche pas
-- Vérifiez que votre raccourci n'est pas utilisé par le jeu
-- Essayez une combinaison avec `Ctrl+Shift+...`
-- Lancez `CONFIGURE.bat` pour changer les raccourcis
+## 📝 Roadmap
 
-### La souris reste capturée par le jeu
-- Passez le jeu en **mode fenêtré** (windowed ou borderless)
-- Utilisez `Échap` pour annuler la sélection
-- C'est une limitation des jeux en plein écran DirectX/OpenGL
+- [ ] Linux/Mac support
+- [ ] Automatic text zone detection
+- [ ] Translation history
+- [ ] Multi-monitor support
+- [ ] Full GUI (without console)
+- [ ] Customizable overlay themes
+- [ ] More LLM model support
 
-### "Impossible de se connecter à Ollama"
-- Vérifiez qu'Ollama est bien lancé : `ollama serve`
-- Testez l'URL : ouvrez `http://localhost:11434` dans votre navigateur
-- Vérifiez que le port 11434 n'est pas bloqué par un firewall
+---
 
-### "Tesseract non trouvé" ou "TesseractNotFoundError"
-- Vérifiez que Tesseract est installé : `tesseract --version`
-- Sur Windows, ajoutez le chemin dans le PATH
-- Relancez `INSTALL.bat`
+## 🤝 Contributing
 
-### "Aucun texte détecté"
-- La zone sélectionnée est peut-être trop petite ou floue
-- Essayez le mode EasyOCR : `Ctrl+Shift+M` pour changer de mode
-- Le contraste du texte est peut-être trop faible
+Contributions are welcome! Feel free to:
+- Open an issue to report a bug
+- Suggest a feature
+- Submit a pull request
 
-### Erreur "Module not found"
-- Relancez `INSTALL.bat`
-- Ou manuellement : `venv311\Scripts\pip install -r requirements.txt`
-
-### Performance lente
-- Utilisez le mode **Tesseract** pour le gaming
-- Vérifiez votre CPU/GPU (Vision mode est très intensif)
-- Réduisez la taille de la zone sélectionnée
-
-## 📝 TODO / Roadmap
-
-- [ ] Support Linux/Mac
-- [ ] Mode de sélection automatique (détection de zones de texte)
-- [ ] Historique des traductions
-- [ ] Support multi-écrans
-- [ ] Interface graphique complète (sans console)
-- [ ] Thèmes personnalisables pour l'overlay
-
-## 🤝 Contribution
-
-Les contributions sont les bienvenues ! N'hésitez pas à :
-- Ouvrir une issue pour signaler un bug
-- Proposer une fonctionnalité
-- Soumettre une pull request
+---
 
 ## 📄 License
 
-MIT License - Ce projet est sous licence MIT. Libre à vous de l'adapter à vos besoins !
+MIT License - This project is under MIT license. Feel free to adapt it to your needs!
 
-## 🙏 Remerciements
+---
+
+## 🙏 Credits
 
 - [Tesseract OCR](https://github.com/tesseract-ocr/tesseract)
 - [EasyOCR](https://github.com/JaidedAI/EasyOCR)
@@ -335,6 +304,6 @@ MIT License - Ce projet est sous licence MIT. Libre à vous de l'adapter à vos 
 
 ---
 
-**Développé avec ❤️ pour la communauté gaming**
+**Developed with ❤️ for the gaming community**
 
-Si vous aimez ce projet, n'oubliez pas de lui donner une ⭐ sur GitHub !
+If you like this project, don't forget to give it a ⭐ on GitHub!
