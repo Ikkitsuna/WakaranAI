@@ -14,6 +14,8 @@ Real-time universal translator for video games using OCR/Vision and local AI (Ol
 
 Instantly translate untranslated game texts by capturing any screen area.
 
+📋 **Release validation**: See the [phase-by-phase validation plan](RELEASE_VALIDATION_PLAN.md) for startup time, OCR latency, CI, and platform checks.
+
 ---
 
 ## ✨ Features
